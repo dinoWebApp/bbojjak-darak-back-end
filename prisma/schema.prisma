@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Account {
+  id Int @id @default(autoincrement())
+  email String @unique(map: "email")
+  password String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user User?
+
+  @@map("accounts")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  accountId Int @unique() @map("account_id")
+  account Account @relation(fields: [accountId], references: [id])
+  name String
+  phoneNumber String? @map("phone_number")
+  address String?
+  detailAddress String? @map("detail_address")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+  name String
+  price Int
+  discountRate Float @default(0) @map("discount_rate")
+  stock Int @default(0)
+  categoryId Int @map("category_id")
+  category Category @relation(fields: [categoryId], references: [id])
+  description String?
+  rating Float?
+  sales Int @default(0)
+  favoritesCount Int @default(0) @map("favorites_count")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([categoryId])
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  products Product[]
+}
+
+
