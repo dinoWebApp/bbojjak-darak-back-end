@@ -36,6 +36,10 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  favorites Favorite[]
+  reviews Review[]
+  transactions Transaction[]
+
   @@map("users")
 }
 
@@ -54,12 +58,91 @@ model Product {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  favorites Favorite[]
+  options Option[]
+  reviews Review[]
+  transactions Transaction[]
+
   @@index([categoryId])
+  @@map("products")
 }
 
 model Category {
   id Int @id @default(autoincrement())
+  name String
+  parentId Int? @map("product_id")
+  parentCategory Category? @relation("self_references",fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  childCategories Category[] @relation("self_references")
   products Product[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([parentId])
+  @@map("categories")
+}
+
+model Favorite {
+  id Int @id @default(autoincrement())
+  userId Int @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+  productId Int @map("product_id")
+  product Product @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([productId])
+  @@map("favorites")
+}
+
+model Option {
+  id Int @id @default(autoincrement())
+  name String
+  price Int
+  productId Int @map("product_id")
+  product Product @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([productId])
+  @@map("options")
+}
+
+model Review {
+  id Int @id @default(autoincrement())
+  userId Int @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+  productId Int @map("product_id")
+  product Product @relation(fields: [productId], references: [id])
+  content String
+  rating Float
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([productId])
+  @@map("reviews")
+}
+
+model Transaction {
+  id Int @id @default(autoincrement())
+  productName String @map("product_name")
+  optionName String @map("option_name")
+  customerName String @map("customer_name")
+  quantity Int
+  customerAddress String @map("customer_address")
+  customerPhoneNumber String @map("customer_phone_number")
+  paidAt DateTime @map("paid_at")
+  productId Int @map("product_id")
+  product Product @relation(fields: [productId], references: [id])
+  userId Int @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([productId])
+  @@map("transactions")
 }
 
 
