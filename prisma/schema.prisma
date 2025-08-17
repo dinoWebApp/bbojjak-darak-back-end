@@ -18,6 +18,7 @@ model Account {
   id Int @id @default(autoincrement())
   email String @unique(map: "email")
   password String
+  isAdmin Boolean @default(false)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   user User?
@@ -143,6 +144,15 @@ model Transaction {
   @@index([userId])
   @@index([productId])
   @@map("transactions")
+}
+
+model ApiKey {
+  id Int @id @default(autoincrement())
+  key String @unique()
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("api-keys")
 }
 
 
