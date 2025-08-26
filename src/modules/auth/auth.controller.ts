@@ -12,5 +12,4 @@ export class AuthController {
   @HttpCode(200)
   @ApiOperation({summary: '1.1 로그인'})
   @SwaggerApiHeaders()
-
 }
